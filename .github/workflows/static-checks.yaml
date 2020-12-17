@@ -13,8 +13,8 @@ jobs:
       TRAVIS_BRANCH: ${{ github.base_ref }}
       TRAVIS_PULL_REQUEST_BRANCH: ${{ github.head_ref }}
       TRAVIS_PULL_REQUEST_SHA : ${{ github.event.pull_request.head.sha }}
-      RUST_BACKTRACE=1
-      RUST_AGENT=yes
+      RUST_BACKTRACE: "1"
+      RUST_AGENT: "yes"
     steps:
     - name: Install Go
       uses: actions/setup-go@v2
@@ -41,8 +41,23 @@ jobs:
         kata_repo=$(go env GOPATH)/src/github.com/kata-containers/kata-containers
         pushd ${kata_repo}
         GOPATH=$(go env GOPATH) .ci/setup.sh 
+    - name: Install rust
+      run: |
+        kata_repo=$(go env GOPATH)/src/github.com/kata-containers/kata-containers
+        pushd ${kata_repo}
+        GOPATH=$(go env GOPATH) .ci/install_rust.sh
     - name: Running static checks
       run: |
         kata_repo=$(go env GOPATH)/src/github.com/kata-containers/kata-containers
         pushd ${kata_repo}
         GOPATH=$(go env GOPATH) .ci/static-checks.sh
+    - name: Install agent
+      run: |
+        kata_repo=$(go env GOPATH)/src/github.com/kata-containers/kata-containers
+        pushd ${agent_repo}/src/agent
+        GOPATH=$(go env GOPATH) make    
+    - name: Install agent
+      run: |
+        kata_repo=$(go env GOPATH)/src/github.com/kata-containers/kata-containers
+        pushd ${agent_repo}/src/agent
+        GOPATH=$(go env GOPATH) make check 
