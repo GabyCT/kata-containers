@@ -80,6 +80,7 @@ EOF
 	metrics_json_save
 
 	kubectl delete pod "$client_pod_name" "$server_pod_name"
+	kubectl get pods -A
 	check_processes
 }
 main "$@"
